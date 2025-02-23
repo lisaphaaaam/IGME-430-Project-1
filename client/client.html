@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Countries API</title>
+</head>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Select all forms
+        const forms = document.querySelectorAll("form");
+
+        forms.forEach(form => {
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                const method = form.querySelector("input[name='method']:checked")?.value || form.getAttribute("data-method");
+                const endpoint = form.getAttribute("data-endpoint");
+                const resultBox = form.nextElementSibling; // The <pre class="result"></pre> element
+
+                let url = endpoint;
+                let options = { method };
+
+                if (method === "GET" || method === "HEAD") {
+                    const params = new URLSearchParams(new FormData(form)).toString();
+                    if (params) url += `?${params}`;
+                } else if (method === "POST") {
+                    const formData = new FormData(form);
+                    const body = Object.fromEntries(formData.entries());
+
+                    options.headers = { "Content-Type": "application/json" };
+                    options.body = JSON.stringify(body);
+                }
+
+                try {
+                    const response = await fetch(url, options);
+                    if (method === "HEAD") {
+                        resultBox.textContent = `Status: ${response.status}`;
+                        return;
+                    }
+                    const data = await response.json();
+                    resultBox.textContent = JSON.stringify(data, null, 2);
+                } catch (error) {
+                    resultBox.textContent = `Error: ${error.message}`;
+                }
+            });
+        });
+    });
+</script>
+
+<body>
+    <div class="mainContent">
+        <!-- <a href="/docs">API Documentation</a> -->
+
+        <h1>Test Countries API</h1>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getAllCountries
+            </h2>
+            <div class="content">
+                <div class="content-box">
+                    <h3>Test This Endpoint</h3>
+                    <form data-method="GET" data-endpoint="/api/getAllCountries">
+                        <label><input type="radio" name="method" value="GET" checked=""> GET</label>
+                        <label><input type="radio" name="method" value="HEAD"> HEAD</label><br>
+                        <button type="submit">Send Request</button>
+                    </form>
+                    <pre class="result"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getAllRegions
+            </h2>
+            <div class="content">
+                <div class="content-box">
+                    <h3>Test This Endpoint</h3>
+                    <form data-method="GET" data-endpoint="/api/getAllRegions">
+                        <label><input type="radio" name="method" value="GET" checked=""> GET</label>
+                        <label><input type="radio" name="method" value="HEAD"> HEAD</label><br>
+                        <button type="submit">Send Request</button>
+                    </form>
+                    <pre class="result"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getCapital
+            </h2>
+            <div class="content">
+                <div class="content-box">
+                    <h3>Test This Endpoint</h3>
+                    <form data-method="GET" data-endpoint="/api/getCapital">
+                        <label>Country: <input type="text" name="country"></label><br>
+                        <label><input type="radio" name="method" value="GET" checked=""> GET</label>
+                        <label><input type="radio" name="method" value="HEAD"> HEAD</label><br>
+                        <button type="submit">Send Request</button>
+                    </form>
+                    <pre class="result"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getCountryName
+            </h2>
+            <div class="content">
+                <div class="content-box">
+                    <h3>Test This Endpoint</h3>
+                    <form data-method="GET" data-endpoint="/api/getCountryName">
+                        <label>Capital: <input type="text" name="capital"></label><br>
+                        <label><input type="radio" name="method" value="GET" checked=""> GET</label>
+                        <label><input type="radio" name="method" value="HEAD"> HEAD</label><br>
+                        <button type="submit">Send Request</button>
+                    </form>
+                    <pre class="result"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/addVisited
+            </h2>
+            <div class="content">
+                <div class="content-box">
+                    <h3>Test This Endpoint</h3>
+                    <form data-method="POST" data-endpoint="/api/addVisited">
+                        <label>Country: <input type="text" name="visited"></label><br>
+                        <button type="submit">Send Request</button>
+                    </form>
+                    <pre class="result"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/addCountry
+            </h2>
+            <div class="content">
+                <div class="content-box">
+                    <h3>Test This Endpoint</h3>
+                    <form data-method="POST" data-endpoint="/api/addCountry">
+                        <label>Country: <input type="text" name="country"></label><br>
+                        <label>Captial: <input type="text" name="capital"></label><br>
+                        <label>Region: <input type="text" name="region"></label><br>
+                        <button type="submit">Send Request</button>
+                    </form>
+                    <pre class="result"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Lisa Pham - 2025 - IGME 430 Project 1
+    </footer>
+
+
+
+</body>
+
+</html>
