@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countries API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+
+</head>
+
+<body>
+    <div class="mainContent">
+        <a href="client.html">Countries API</a>
+
+        <h1>Countries API Documentation</h1>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getAllCountries
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
+            </h2>
+            <div class="content" style="display: block;">
+                <div class="content-box">
+                    <h3>Query Params</h3>
+                    <p class="param">No supported params</p>
+                    <h3>Returns</h3>
+                    <p class="param">A JSON array of all countries. Format: <code>[string]</code></p>
+                    <h3>Examples</h3>
+                    <section class="example">
+                        <p>Request: <code>/api/getAllCountries</code></p>
+                        <p>Result: <code>["country1", "country2", "country3"]</code></p>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getAllRegions
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
+            </h2>
+            <div class="content" style="display: block;">
+                <div class="content-box">
+                    <h3>Query Params</h3>
+                    <p class="param">No supported params</p>
+                    <h3>Returns</h3>
+                    <p class="param">A JSON array of all regions. Format: <code>[string]</code></p>
+                    <h3>Examples</h3>
+                    <section class="example">
+                        <p>Request: <code>/api/getAllRegions</code></p>
+                        <p>Result: <code>["region1", "region2", "region3"]</code></p>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getCapital
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
+            </h2>
+            <div class="content" style="display: block;">
+                <div class="content-box">
+                    <h3>Query Params</h3>
+                    <p class="param"><code>country</code> - The name of the country</p>
+                    <h3>Returns</h3>
+                    <p class="param">A JSON country object's property. <br>Format:
+                        <code>{string}</code>
+                    </p>
+                    <h3>Examples</h3>
+                    <section class="example">
+                        <p>Request: <code>/api/getCapital?capital=capital1</code></p>
+                        <p>Result: <code>{ capital: 'Capital1'}</code></p>
+                    </section>
+                    <section class="example">
+                        <p>Request: <code>/api/getCapital</code></p>
+                        <p>Result: <code>400 Error</code></p>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/getCountryName
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
+            </h2>
+            <div class="content" style="display: block;">
+                <div class="content-box">
+                    <h3>Query Params</h3>
+                    <p class="param"><code>capital</code> - The capital of the country</p>
+                    <h3>Returns</h3>
+                    <p class="param">A JSON country object. <br>Format:
+                        <code>{ name: string, capital: string, region: string, visited: string}</code>
+                    </p>
+                    <h3>Examples</h3>
+                    <section class="example">
+                        <p>Request: <code>/api/getCountryName?name=name1</code></p>
+                        <p>Result: <code>{ name: 'Name1', capital: 'Capital1', region: 'Region1', visited: 'No'}</code>
+                        </p>
+                    </section>
+                    <section class="example">
+                        <p>Request: <code>/api/getCountryName</code></p>
+                        <p>Result: <code>404 Error</code></p>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/addVisited
+                <span class="methods"><code>POST</code></span>
+            </h2>
+            <div class="content" style="display: block;">
+                <div class="content-box">
+                    <h3>Supported Body Formats</h3>
+                    <p class="param"><code>application/json</code>
+                    </p>
+                    <h3>Body Params</h3>
+                    <p class="param"><code>country</code> Type: <code>string</code>
+                        - The name of the country</p>
+                    <h3>Returns</h3>
+                    <p class="param">A JSON country object with changed visited property value <br>Format:
+                        <code>{ name: string, capital: string, region: string, visited: string}</code>
+                    </p>
+                    <h3>Examples</h3>
+                    <section class="example">
+                        <p>Request: <code>/api/addVisited</code></p>
+                        <p>Body: <code>{name: 'Name1'}</code></p>
+                        <p>Result: <code>{ name: 'Name1', capital: 'Capital1', region: 'Region1', visited: 'Yes'}</code>
+                        </p>
+                    </section>
+                    <section class="example">
+                        <p>Request: <code>/api/addVisited</code></p>
+                        <p>Body: <code>{name: 'Name1'}</code></p>
+                        <p>Result: <code>400 Error</code></p>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h2 class="collapsible">
+                /api/addCountry
+                <span class="methods"><code>POST</code></span>
+            </h2>
+
+            <div class="content" style="display: block;">
+                <div class="content-box">
+                    <h3>Supported Body Formats</h3>
+                    <p class="param"><code>application/json</code>
+                    </p>
+                    <h3>Body Params</h3>
+                    <p class="param"><code>country</code> Type: <code>string</code>
+                        - The name of the country</p>
+                    <p class="param"><code>capital</code> Type: <code>string</code>
+                        - The name of the country's capital</p>
+                    <p class="param"><code>region</code> Type: <code>string</code>
+                        - The name of the country's region</p>
+                    <h3>Returns</h3>
+                    <p class="param">A JSON country object <br>Format:
+                        <code>{ name: string, capital: string, region: string, visited: string}</code>
+                    </p>
+                    <h3>Examples</h3>
+                    <section class="example">
+                        <p>Request: <code>/api/addCountry</code></p>
+                        <p>Body: <code>{name: 'Name1', capital: 'Capital1', region: 'Region1'}</code></p>
+                        <p>Result: <code>{ name: 'Name1', capital: 'Capital1', region: 'Region1', visited: 'No'}</code>
+                        </p>
+                    </section>
+                    <section class="example">
+                        <p>Request: <code>/api/addCountry</code></p>
+                        <p>Body: <code>{name: 'Name1', capital: 'Capital1', region: 'Region1'}</code></p>
+                        <p>Result: <code>400 Error</code></p>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        Lisa Pham - 2025 - IGME 430 Project 1
+    </footer>
+
+</body>
+
+<script>
+    window.onload = () => {
+        document.querySelectorAll(".collapsible").forEach((t => {
+            t.addEventListener("click", (() => {
+                document.querySelectorAll(".content").forEach((e => {
+                    e !== t.nextElementSibling && (e.style.display = "none")
+                }
+                ));
+                const e = t.nextElementSibling;
+                e.style.display = "block" === e.style.display ? "none" : "block"
+            }
+            ))
+        }
+        )),
+            document.querySelectorAll("form").forEach((t => {
+                t.addEventListener("submit", (e => {
+                    e.preventDefault();
+                    const n = new FormData(t)
+                        , o = new URLSearchParams(n).toString()
+                        , r = t.querySelector('input[name="method"]:checked')
+                        , l = r ? r.value : t.dataset.method
+                        , s = t.dataset.endpoint + (o && "POST" !== l ? `?${o}` : "")
+                        , a = t.nextElementSibling;
+                    fetch(s, {
+                        method: l,
+                        headers: "POST" === l ? {
+                            "Content-Type": "application/json"
+                        } : void 0,
+                        body: "POST" === l ? JSON.stringify(Object.fromEntries(n)) : void 0
+                    }).then((t => {
+                        const e = `Status: ${t.status}\nContent-Length: ${t.headers.get("Content-Length")}`;
+                        return t.ok ? "HEAD" !== l ? t.text().then((t => {
+                            t.length > 300 && (t = t.substring(0, 300) + "..."),
+                                a.textContent = `${e}\nResponse: ${t}`
+                        }
+                        )) : void (a.textContent = e) : t.text().then((t => {
+                            throw a.textContent = `${e}\nError: ${t}`,
+                            new Error(t)
+                        }
+                        ))
+                    }
+                    )).catch((t => {
+                        a.textContent.includes("Status:") || (a.textContent = "Error: " + t.message)
+                    }
+                    ))
+                }
+                ))
+            }
+            ))
+    };
+
+</script>
+
+</html>

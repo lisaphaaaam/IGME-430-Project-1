@@ -18,82 +18,114 @@ const respond = (request, response, status, content) => {
 };
 
 const getAllCountries = (request, response) => {
-  const requestResponse = response.json(countries);
-
-  respond(request, response, 200, requestResponse);
+  respond(request, response, 200, countries);
 };
 
 const getAllRegions = (request, response) => {
   const regions = [...new Set(countries.map((country) => country.region))];
-  const requestResponse = response.json(regions);
-
-  respond(request, response, 200, requestResponse);
+  respond(request, response, 200, regions);
 };
 
 const getCapital = (request, response) => {
-  const { country } = request.query;
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const country = url.searchParams.get('country');
+
   const found = countries.find((c) => c.name.toLowerCase() === country.toLowerCase());
 
-  let requestResponse = response.json({ capital: found.capital });
-
   if (!country) {
-    requestResponse = response.json({ message: 'Country name is required', id: 'badRequest' });
-    respond(request, response, 400, requestResponse);
+    return respond(request, response, 400, { message: 'Country name is required', id: 'MissingParams' });
   }
 
   if (!found) {
-    requestResponse = response.json({ message: 'Country not found', id: 'notFound' });
-    respond(request, response, 400, requestResponse);
+    return respond(request, response, 404, { message: 'Country not found', id: 'notFound' });
   }
 
-  respond(request, response, 200, requestResponse);
+  return respond(request, response, 200, { capital: found.capital });
 };
 
 const getCountryName = (request, response) => {
-  const { capital } = request.query;
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const capital = url.searchParams.get('capital');
+
   const found = countries.find((c) => c.capital.toLowerCase() === capital.toLowerCase());
 
   if (!capital) {
-    respond(request, response, 400, response.json({ message: 'Capital name is required', id: 'badRequest' }));
+    return respond(request, response, 400, { message: 'Capital name is required', id: 'MissingParams' });
   }
 
   if (!found) {
-    respond(request, response, 404, response.json({ message: 'Capital not found', id: 'notFound' }));
+    return respond(request, response, 404, { message: 'Capital not found', id: 'notFound' });
   }
 
-  respond(request, response, 200, response.json({ country: found.name }));
+  return respond(request, response, 200, { country: found.name });
 };
 
 const addVisited = (request, response) => {
-  const { country } = request.body;
+  let body = '';
 
-  if (!country) {
-    respond(request, response, 400, response.json({ message: 'Country name is required', id: 'badRequest' }));
-  }
-  const found = countries.find((c) => c.name.toLowerCase() === country.toLowerCase());
-  if (!found) {
-    respond(request, response, 404, response.json({ message: 'Country not found', id: 'notFound' }));
-  }
-  found.visited = true;
+  request.on('data', (chunk) => {
+    body += chunk;
+  });
 
-  respond(request, response, 201, response.json({ message: `${found.name} marked as visited` }));
+  request.on('end', () => {
+    try {
+      const parsedBody = JSON.parse(body);
+      const { country } = parsedBody;
+
+      if (!country) {
+        return respond(request, response, 400, { message: 'Country name is required', id: 'MissingParams' });
+      }
+
+      const found = countries.find((c) => c.name.toLowerCase() === country.toLowerCase());
+
+      if (!found) {
+        return respond(request, response, 404, { message: 'Country not found', id: 'notFound' });
+      }
+
+      if (typeof found.visited === 'undefined') {
+        found.visited = false; 
+      }
+
+      found.visited = true;
+
+      fs.writeFileSync('countries.json', JSON.stringify(countries, null, 2), 'utf-8');
+
+      return respond(request, response, 201, { message: `${found.name} marked as visited` });
+    } catch (error) {
+      console.error('Error parsing request body:', error);
+      return respond(request, response, 400, { message: 'Invalid JSON body', id: 'BadRequest' });
+    }
+  });
 };
 
 const addCountry = (request, response) => {
-  const { name, capital, region } = request.body;
+  let body = '';
 
-  if (!name || !capital || !region) {
-    respond(request, response, 400, response.json({ message: 'Name, capital, and region are required', id: 'badRequest' }));
-  }
-  const exists = countries.some((c) => c.name.toLowerCase() === name.toLowerCase());
-  if (exists) {
-    respond(request, response, 400, response.json({ message: 'Country already exists', id: 'conflict' }));
-  }
+  request.on('data', (chunk) => {
+    body += chunk;
+  });
 
-  const newCountry = { name, capital, region };
-  countries.push(newCountry);
+  request.on('end', () => {
+    const parsedBody = JSON.parse(body);
+    const { name, capital, region } = parsedBody;
 
-  respond(request, response, 201, response.json({ message: 'Country added successfully', country: newCountry }));
+    if (!name || !capital || !region) {
+      return respond(request, response, 400, { message: 'Name, capital, and region are required', id: 'MissingParams' });
+    }
+
+    const exists = countries.some((c) => c.name.toLowerCase() === name.toLowerCase());
+
+    if (exists) {
+      return respond(request, response, 400, { message: 'Country already exists', id: 'Conflict' });
+    }
+
+    const newCountry = {
+      name, capital, region, visited: false,
+    };
+    countries.push(newCountry);
+
+    return respond(request, response, 201, { message: 'Country added successfully', country: newCountry });
+  });
 };
 
 // 404 other pages

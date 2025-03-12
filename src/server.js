@@ -6,13 +6,15 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
   '/': htmlHandler.getIndex,
-  //   '/style.css': htmlHandler.getCSS,
-  //   '/success': responsesHandler.success,
-  //   '/badRequest': responsesHandler.badRequest,
-  //   '/unauthorized': responsesHandler.unauthorized,
-  //   '/forbidden': responsesHandler.forbidden,
-  //   '/internal': responsesHandler.internal,
-  //   '/notImplemented': responsesHandler.notImplemented,
+  '/client.html': htmlHandler.getIndex,
+  '/doc.html': htmlHandler.getDoc,
+  '/style.css': htmlHandler.getCSS,
+  '/api/getAllCountries': responsesHandler.getAllCountries,
+  '/api/getAllRegions': responsesHandler.getAllRegions,
+  '/api/getCapital': responsesHandler.getCapital,
+  '/api/getCountryName': responsesHandler.getCountryName,
+  '/api/addVisited': responsesHandler.addVisited,
+  '/api/addCountry': responsesHandler.addCountry,
   notFound: responsesHandler.notFound,
 };
 

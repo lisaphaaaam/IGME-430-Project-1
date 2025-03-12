@@ -5,60 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Countries API</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+
 </head>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Select all forms
-        const forms = document.querySelectorAll("form");
-
-        forms.forEach(form => {
-            form.addEventListener("submit", async (event) => {
-                event.preventDefault();
-
-                const method = form.querySelector("input[name='method']:checked")?.value || form.getAttribute("data-method");
-                const endpoint = form.getAttribute("data-endpoint");
-                const resultBox = form.nextElementSibling; // The <pre class="result"></pre> element
-
-                let url = endpoint;
-                let options = { method };
-
-                if (method === "GET" || method === "HEAD") {
-                    const params = new URLSearchParams(new FormData(form)).toString();
-                    if (params) url += `?${params}`;
-                } else if (method === "POST") {
-                    const formData = new FormData(form);
-                    const body = Object.fromEntries(formData.entries());
-
-                    options.headers = { "Content-Type": "application/json" };
-                    options.body = JSON.stringify(body);
-                }
-
-                try {
-                    const response = await fetch(url, options);
-                    if (method === "HEAD") {
-                        resultBox.textContent = `Status: ${response.status}`;
-                        return;
-                    }
-                    const data = await response.json();
-                    resultBox.textContent = JSON.stringify(data, null, 2);
-                } catch (error) {
-                    resultBox.textContent = `Error: ${error.message}`;
-                }
-            });
-        });
-    });
-</script>
 
 <body>
     <div class="mainContent">
-        <!-- <a href="/docs">API Documentation</a> -->
+        <a href="doc.html">Documentation</a>
 
         <h1>Test Countries API</h1>
 
         <div class="endpoint">
             <h2 class="collapsible">
                 /api/getAllCountries
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
             </h2>
+
             <div class="content">
                 <div class="content-box">
                     <h3>Test This Endpoint</h3>
@@ -75,6 +37,7 @@
         <div class="endpoint">
             <h2 class="collapsible">
                 /api/getAllRegions
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
             </h2>
             <div class="content">
                 <div class="content-box">
@@ -92,6 +55,7 @@
         <div class="endpoint">
             <h2 class="collapsible">
                 /api/getCapital
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
             </h2>
             <div class="content">
                 <div class="content-box">
@@ -110,6 +74,7 @@
         <div class="endpoint">
             <h2 class="collapsible">
                 /api/getCountryName
+                <span class="methods"><code>GET</code> <code>HEAD</code></span>
             </h2>
             <div class="content">
                 <div class="content-box">
@@ -128,6 +93,7 @@
         <div class="endpoint">
             <h2 class="collapsible">
                 /api/addVisited
+                <span class="methods"><code>POST</code></span>
             </h2>
             <div class="content">
                 <div class="content-box">
@@ -144,6 +110,7 @@
         <div class="endpoint">
             <h2 class="collapsible">
                 /api/addCountry
+                <span class="methods"><code>POST</code></span>
             </h2>
             <div class="content">
                 <div class="content-box">
@@ -164,7 +131,59 @@
         Lisa Pham - 2025 - IGME 430 Project 1
     </footer>
 
+    <script>
+        window.onload = () => {
+            document.querySelectorAll(".collapsible").forEach((t => {
+                t.addEventListener("click", (() => {
+                    document.querySelectorAll(".content").forEach((e => {
+                        e !== t.nextElementSibling && (e.style.display = "none")
+                    }
+                    ));
+                    const e = t.nextElementSibling;
+                    e.style.display = "block" === e.style.display ? "none" : "block"
+                }
+                ))
+            }
+            )),
+                document.querySelectorAll("form").forEach((t => {
+                    t.addEventListener("submit", (e => {
+                        e.preventDefault();
 
+                        const n = new FormData(t)
+                            , o = new URLSearchParams(n).toString()
+                            , r = t.querySelector('input[name="method"]:checked')
+                            , l = r ? r.value : t.dataset.method
+                            , s = t.dataset.endpoint + (o && "POST" !== l ? `?${o}` : "")
+                            , a = t.nextElementSibling;
+                        fetch(s, {
+                            method: l,
+                            headers: "POST" === l ? {
+                                "Content-Type": "application/json"
+                            } : void 0,
+                            body: "POST" === l ? JSON.stringify(Object.fromEntries(n)) : void 0
+                        }).then((t => {
+                            const e = `Status: ${t.status}\nContent-Length: ${t.headers.get("Content-Length")}`;
+                            return t.ok ? "HEAD" !== l ? t.text().then((t => {
+                                t.length > 300 && (t = t.substring(0, 300) + "..."),
+                                    a.textContent = `${e}\nResponse: ${t}`
+                            }
+                            )) : void (a.textContent = e) : t.text().then((t => {
+                                throw a.textContent = `${e}\nError: ${t}`,
+                                new Error(t)
+                            }
+                            ))
+                        }
+                        )).catch((t => {
+                            a.textContent.includes("Status:") || (a.textContent = "Error: " + t.message)
+                        }
+                        ))
+                    }
+                    ))
+                }
+                ))
+        };
+
+    </script>
 
 </body>
 
