@@ -155,28 +155,31 @@
                             , l = r ? r.value : t.dataset.method
                             , s = t.dataset.endpoint + (o && "POST" !== l ? `?${o}` : "")
                             , a = t.nextElementSibling;
+
                         fetch(s, {
                             method: l,
                             headers: "POST" === l ? {
-                                "Content-Type": "application/json"
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Accept': 'application/json',
                             } : void 0,
-                            body: "POST" === l ? JSON.stringify(Object.fromEntries(n)) : void 0
-                        }).then((t => {
-                            const e = `Status: ${t.status}\nContent-Length: ${t.headers.get("Content-Length")}`;
-                            return t.ok ? "HEAD" !== l ? t.text().then((t => {
-                                t.length > 300 && (t = t.substring(0, 300) + "..."),
-                                    a.textContent = `${e}\nResponse: ${t}`
+                            body: "POST" === l ? JSON.stringify(Object.fromEntries([...n])) : void 0
+                        })
+                            .then((t => {
+                                const e = `Status: ${t.status}\nContent-Length: ${t.headers.get("Content-Length")}`;
+                                return t.ok ? "HEAD" !== l ? t.text().then((t => {
+                                    t.length > 300 && (t = t.substring(0, 300) + "..."),
+                                        a.textContent = `${e}\nResponse: ${t}`
+                                }
+                                )) : void (a.textContent = e) : t.text().then((t => {
+                                    throw a.textContent = `${e}\nError: ${t}`,
+                                    new Error(t)
+                                }
+                                ))
                             }
-                            )) : void (a.textContent = e) : t.text().then((t => {
-                                throw a.textContent = `${e}\nError: ${t}`,
-                                new Error(t)
+                            )).catch((t => {
+                                a.textContent.includes("Status:") || (a.textContent = "Error: " + t.message)
                             }
                             ))
-                        }
-                        )).catch((t => {
-                            a.textContent.includes("Status:") || (a.textContent = "Error: " + t.message)
-                        }
-                        ))
                     }
                     ))
                 }

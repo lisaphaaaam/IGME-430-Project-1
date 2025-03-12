@@ -1,4 +1,5 @@
 const fs = require('fs');
+const querystring = require('querystring');
 
 const countries = JSON.parse(fs.readFileSync('countries.json', 'utf-8'));
 
@@ -69,8 +70,14 @@ const addVisited = (request, response) => {
 
   request.on('end', () => {
     try {
-      const parsedBody = JSON.parse(body);
-      const { country } = parsedBody;
+      let parsedBody;
+      if (request.headers['content-type'] === 'application/json') {
+        parsedBody = JSON.parse(body);
+      } else {
+        parsedBody = querystring.parse(body); 
+      }
+
+      const { visited: country } = parsedBody; 
 
       if (!country) {
         return respond(request, response, 400, { message: 'Country name is required', id: 'MissingParams' });
@@ -83,9 +90,11 @@ const addVisited = (request, response) => {
       }
 
       if (typeof found.visited === 'undefined') {
-        found.visited = false; 
+        found.visited = false;
       }
-
+      if (found.visited) {
+        return respond(request, response, 200, { message: `${found.name} is already marked as visited` });
+      }
       found.visited = true;
 
       fs.writeFileSync('countries.json', JSON.stringify(countries, null, 2), 'utf-8');
